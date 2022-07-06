@@ -3,10 +3,7 @@
 
 # fail fast
 set -e
-
-if [ -n "$BUILDPACK_DEBUG" ]; then
-    set -x
-fi
+set -x
 
 if [ ! -n "$DB_BACKUP_SCHEDULE" ]; then
     $DB_BACKUP_SCHEDULE = '30 2 * * *'
@@ -15,9 +12,6 @@ fi
 if [ ! -n "$DB_BACKUP_CONTAINER_SIZE" ]; then
     $DB_BACKUP_CONTAINER_SIZE = 'S'
 fi
-
-# clean up leaking environment
-unset GIT_DIR
 
 # config
 AWS_CLI_URL="https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
