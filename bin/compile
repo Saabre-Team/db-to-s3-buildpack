@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
-# bin/compile <build-dir> <cache-dir>
 
 # fail fast
 set -e
+
+set -o pipefail
+shopt -s dotglob
+
 set -x
 
 if [ ! -n "$DB_BACKUP_SCHEDULE" ]; then

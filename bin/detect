@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# bin/detect <build-dir>
 
 echo 'scalingo-db-backup-scheduler'
 exit 0
