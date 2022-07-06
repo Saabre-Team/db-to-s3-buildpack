@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir>
+
+# fail fast
+set -e
+
+if [ -n "$BUILDPACK_DEBUG" ]; then
+    set -x
+fi
+
+if [ ! -n "$DB_BACKUP_SCHEDULE" ]; then
+    $DB_BACKUP_SCHEDULE = '30 2 * * *'
+fi
+
+if [ ! -n "$DB_BACKUP_CONTAINER_SIZE" ]; then
+    $DB_BACKUP_CONTAINER_SIZE = 'S'
+fi
+
+# clean up leaking environment
+unset GIT_DIR
+
+# config
+AWS_CLI_URL="https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
+
+# parse and derive params
+BUILD_DIR=$1
+CACHE_DIR=$2
+
+LP_DIR=`cd $(dirname $0); cd ..; pwd`
+BUILDPACK_DIR="$(dirname $(dirname $0))"
+
+echo "-----> Fetching AWS CLI into slug"
+curl --progress-bar $AWS_CLI_URL -o "/tmp/awscliv2.zip"
+
+echo "-----> Installing AWS Bundle"
+unzip -qq -d "$BUILD_DIR/vendor" /tmp/awscliv2.zip
+
+echo "-----> Adding installer script into /app/.profile.d"
+mkdir -p $BUILD_DIR/.profile.d
+cp "$BUILDPACK_DIR/bin/install_awscli.sh" $BUILD_DIR/.profile.d/
+chmod +x $BUILD_DIR/.profile.d/install_awscli.sh
+
+# Cleaning up...
+echo "-----> Cleaning up"
+rm -rf /tmp/awscli*
+
+echo "-----> AWS CLI installation done"
+
+if [ ! -d "vendor" ]; then
+    mkdir -p vendor
+fi
+
+if [ ! -d "vendor/scripts" ]; then
+    mkdir -p vendor/scripts
+fi
+
+echo "-----> Add backup script from $BUILDPACK_DIR/backup.sh to $BUILD_DIR/vendor/scripts/"
+cp "$BUILDPACK_DIR/s3-backup.sh" $BUILD_DIR/vendor/scripts/
+
+echo "-----> Backup script moved"
+
+if [ ! -d "/app/cron.json"]; then 
+    echo "-----> Creating cron.json with schedule for backup script"
+    echo '{ "jobs": [] }' > /app/cron.json
+    echo "-----> Created empty cron.json"
+    cat /app/cron.json
+fi
+
+echo "-----> Adding schedule for backup script in cron.json"
+
+echo "$(jq '.jobs += [{"command": $cron, "size": $size}]' /app/cron.json \
+--arg cron "$DB_BACKUP_SCHEDULE sh $BUILD_DIR/vendor/scripts/s3-backup.sh" \
+--arg size "$DB_BACKUP_CONTAINER_SIZE" | jq '.')" > /app/cron.json
+
+echo "-----> Added schedule"
+cat /app/cron.json
