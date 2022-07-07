@@ -6,7 +6,7 @@ set -e
 set -o pipefail
 shopt -s dotglob
 
-if [ ]; then 
+if [ -n "$BUILDPACK_DEBUG" ]; then 
     set -x
 fi
 
@@ -54,7 +54,7 @@ if [ ! -d "$BUILD_DIR/vendor/scripts" ]; then
 fi
 
 echo "-----> Add backup script from $BUILDPACK_DIR/backup.sh to $BUILD_DIR/vendor/scripts/"
-cp "$BUILDPACK_DIR/s3-backup.sh" $BUILD_DIR/vendor/scripts/
+cp "$BUILDPACK_DIR/s3-backup.sh" "$BUILD_DIR/vendor/scripts/"
 
 echo "-----> Backup script moved"
 

@@ -33,6 +33,7 @@ if [[ -z "$BACKUP_DATABASE_URL" ]] ; then
   exit 1
 fi
 
+DB_BACKUP_SCHEME=$(echo $BACKUP_DATABASE_URL | grep -oP "\K(.+?):" | cut -d: -f1)
 DB_BACKUP_USER=$(echo $BACKUP_DATABASE_URL | grep -oP "mysql://\K(.+?):" | cut -d: -f1)
 DB_BACKUP_PASSWORD=$(echo $BACKUP_DATABASE_URL | grep -oP "mysql://.*:\K(.+?)@" | cut -d@ -f1)
 DB_BACKUP_HOST=$(echo $BACKUP_DATABASE_URL | grep -oP "mysql://.*@\K(.+?):" | cut -d: -f1)
@@ -41,7 +42,7 @@ DB_BACKUP_DATABASE=$(echo $BACKUP_DATABASE_URL | grep -oP "mysql://.*@.*:.*/\K(.
 
 printf "${Green}Start dump of database directly to S3${EC}"
 
-if [[ $DB_BACKUP_SCHEME = mysql ]]; then
+if [[ $DB_BACKUP_SCHEME == mysql ]]; then
   dbclient-fetcher mysql
 
   mysqldump \
