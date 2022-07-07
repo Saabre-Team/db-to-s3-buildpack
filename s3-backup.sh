@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 PYTHONHOME=/app/vendor/awscli/
 Green='\033[0;32m'
