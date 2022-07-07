@@ -6,7 +6,9 @@ set -e
 set -o pipefail
 shopt -s dotglob
 
-set -x
+if [ ]; then 
+    set -x
+fi
 
 if [ ! -n "$DB_BACKUP_SCHEDULE" ]; then
     DB_BACKUP_SCHEDULE="30 2 * * *"
@@ -56,20 +58,20 @@ cp "$BUILDPACK_DIR/s3-backup.sh" $BUILD_DIR/vendor/scripts/
 
 echo "-----> Backup script moved"
 
-if [[ ! -f "/app/cron.json" ]]; then 
+if [[ ! -f "$BUILD_DIR/cron.json" ]]; then 
     echo "-----> Creating cron.json with schedule for backup script"
-    echo '{ "jobs": [] }' > /app/cron.json
+    echo '{ "jobs": [] }' > $BUILD_DIR/cron.json
     echo "-----> Created empty cron.json"
-    cat /app/cron.json
+    cat "$BUILD_DIR/cron.json"
 else   
-    echo "-----> /app/cron.json already exists"
+    echo "-----> /$BUILD_DIR/cron.json already exists"
 fi
 
 echo "-----> Adding schedule for backup script in cron.json"
 
-echo "$(jq '.jobs += [{"command": $cron, "size": $size}]' /app/cron.json \
---arg cron "$DB_BACKUP_SCHEDULE sh $BUILD_DIR/vendor/scripts/s3-backup.sh" \
---arg size "$DB_BACKUP_CONTAINER_SIZE" | jq '.')" > /app/cron.json
+echo "$(jq '.jobs += [{"command": $cron, "size": $size}]' $BUILD_DIR/cron.json \
+--arg cron "$DB_BACKUP_SCHEDULE sh /app/vendor/scripts/s3-backup.sh" \
+--arg size "$DB_BACKUP_CONTAINER_SIZE" | jq '.')" > $BUILD_DIR/cron.json
 
 echo "-----> Added schedule"
-cat /app/cron.json
+cat $BUILD_DIR/cron.json
