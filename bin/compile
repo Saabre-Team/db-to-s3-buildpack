@@ -70,7 +70,7 @@ fi
 echo "-----> Adding schedule for backup script in cron.json"
 
 echo "$(jq '.jobs += [{"command": $cron, "size": $size}]' $BUILD_DIR/cron.json \
---arg cron "$DB_BACKUP_SCHEDULE sh /app/vendor/scripts/s3-backup.sh" \
+--arg cron "$DB_BACKUP_SCHEDULE bash /app/vendor/scripts/s3-backup.sh" \
 --arg size "$DB_BACKUP_CONTAINER_SIZE" | jq '.')" > $BUILD_DIR/cron.json
 
 echo "-----> Added schedule"

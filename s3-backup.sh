@@ -33,7 +33,7 @@ if [[ -z "$BACKUP_DATABASE_URL" ]] ; then
   exit 1
 fi
 
-DB_BACKUP_SCHEME=$(echo $BACKUP_DATABASE_URL | grep -oP "\K(.+?):" | cut -d: -f1)
+DB_BACKUP_SCHEME=$(echo $BACKUP_DATABASE_URL | grep -oP "^(.+?):" | cut -d: -f1)
 DB_BACKUP_USER=$(echo $BACKUP_DATABASE_URL | grep -oP "mysql://\K(.+?):" | cut -d: -f1)
 DB_BACKUP_PASSWORD=$(echo $BACKUP_DATABASE_URL | grep -oP "mysql://.*:\K(.+?)@" | cut -d@ -f1)
 DB_BACKUP_HOST=$(echo $BACKUP_DATABASE_URL | grep -oP "mysql://.*@\K(.+?):" | cut -d: -f1)
