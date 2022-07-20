@@ -1,37 +1,19 @@
 ## Scalingo Buildpack
 
-Capture MySQL DB in Scalingo and copy it to s3 bucket. Buildpack contains AWS CLI.
+Capture MySQL DB in Scalingo and stream it to s3 bucket. Buildpack contains AWS CLI.
 
 ### Installation
-Add buildpack to your App
-```
-```
-> Buildpacks are scripts that are run when your app is deployed.
+
+[Add buildpack to your App](https://doc.scalingo.com/platform/deployment/buildpacks/multi)
+Buildpacks are scripts that are run when your app is deployed.
 
 ### Configure environment variables
 ```
-$ heroku config:add DB_BACKUP_AWS_ACCESS_KEY_ID=someaccesskey --app <your_app>
-$ heroku config:add DB_BACKUP_AWS_SECRET_ACCESS_KEY=supermegasecret --app <your_app>
-$ heroku config:add DB_BACKUP_AWS_DEFAULT_REGION=eu-central-1 --app <your_app>
-$ heroku config:add DB_BACKUP_S3_BUCKET_PATH=your-bucket --app <your_app>
-$ heroku config:add DB_BACKUP_ENC_KEY=somethingverysecret --app <your_app>
-```
-
-#### For MySQL:
-
-You will need to install a mysql buildpack to make the `mysqldump` command available. For example:
-
-```
-$ heroku buildpacks:add https://github.com/daetherius/heroku-buildpack-mysql --app <your_app>
-```
-
-Then configure the following:
-
-```
-$ heroku config:add DB_BACKUP_HOST=your-db-host --app <your_app>
-$ heroku config:add DB_BACKUP_USER=your-db-user --app <your_app>
-$ heroku config:add DB_BACKUP_PASSWORD=your-db-password --app <your_app>
-$ heroku config:add DB_BACKUP_DATABASE=your-db-name --app <your_app>
+$ scalingo -a my-app env-set "DB_BACKUP_AWS_ACCESS_KEY_ID=secret"
+$ scalingo -a my-app env-set "DB_BACKUP_AWS_SECRET_ACCESS_KEY=secret"
+$ scalingo -a my-app env-set "DB_BACKUP_AWS_DEFAULT_REGION=us-east-1"
+$ scalingo -a my-app env-set "DB_BACKUP_S3_BUCKET_PATH=my.bucket/path/to/backup/"
+$ scalingo -a my-app env-set "BACKUP_DATABASE_URL=mysql://user:password@host:port/dbname"
 ```
 
 ### One-time runs
@@ -39,9 +21,36 @@ $ heroku config:add DB_BACKUP_DATABASE=your-db-name --app <your_app>
 You can run the backup task as a one-time task:
 
 ```
-$ heroku run bash /app/vendor/backup.sh -db <somedbname> --app <your_app>
+$ scalingo --app my-app run bash /app/vendor/scripts/s3-backup.sh
 ```
 
 ### Scheduler
 
+By default, the backup is scheduled at 2:30am. You can change the scheduling with this command, following cron syntax.
+
+```
+$ scalingo -a my-app env-set "DB_BACKUP_SCHEDULE=30 2 * * *"
+```
+
+### Container size
+
+Container size is S by default. If for some reason you need more :
+
+```
+$ scalingo -a my-app env-set "DB_BACKUP_CONTAINER_SIZE=2XL"
+```
+
+### Disable
+
+If you wish to disable the buildpack on some environnements, set the DISABLE_DB_BACKUP env var to whatever
+
+```
+$ scalingo -a my-app env-set "DISABLE_DB_BACKUP=chewbhakan"
+```
+
 ### Restoring
+
+
+### Troubleshoot
+
+Follow [this document](https://doc.scalingo.com/platform/deployment/buildpacks/custom) in order to know how to investigate further issues 
