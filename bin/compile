@@ -45,11 +45,7 @@ rm -rf /tmp/awscli*
 
 echo "-----> AWS CLI installation done"
 
-if [ ! -d "$BUILD_DIR/vendor" ]; then
-    mkdir -p $BUILD_DIR/vendor
-fi
-
-if [ ! -d "$BUILD_DIR/vendor/scripts" ]; then
+if [ ! -d "$BUILD_DIR/vendor/" ] || [ ! -d "$BUILD_DIR/vendor/scripts" ]; then
     mkdir -p $BUILD_DIR/vendor/scripts
 fi
 
@@ -69,7 +65,7 @@ if [[ ! -f "$BUILD_DIR/cron.json" ]]; then
     echo "-----> Created empty cron.json"
     cat "$BUILD_DIR/cron.json"
 else   
-    echo "-----> /$BUILD_DIR/cron.json already exists"
+    echo "-----> $BUILD_DIR/cron.json already exists"
 fi
 
 echo "-----> Adding schedule for backup script in cron.json"
