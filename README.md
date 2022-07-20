@@ -42,10 +42,10 @@ $ scalingo -a my-app env-set "DB_BACKUP_CONTAINER_SIZE=2XL"
 
 ### Disable
 
-If you wish to disable the buildpack on some environnements, set the DISABLE_DB_BACKUP env var to whatever
+If you wish to disable the scheduling on some environnements, set the DISABLE_DB_BACKUP_SCHEDULE env var to whatever
 
 ```
-$ scalingo -a my-app env-set "DISABLE_DB_BACKUP=chewbhakan"
+$ scalingo -a my-app env-set "DISABLE_DB_BACKUP_SCHEDULE=chewbhakan"
 ```
 
 ### Restoring
