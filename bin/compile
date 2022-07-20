@@ -25,7 +25,6 @@ AWS_CLI_URL="https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
 BUILD_DIR=$1
 CACHE_DIR=$2
 
-LP_DIR=`cd $(dirname $0); cd ..; pwd`
 BUILDPACK_DIR="$(dirname $(dirname $0))"
 
 echo "-----> Fetching AWS CLI into slug"
