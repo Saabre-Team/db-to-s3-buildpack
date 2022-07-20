@@ -60,7 +60,7 @@ if [[ $DB_BACKUP_SCHEME == mysql ]]; then
     AWS_ACCESS_KEY_ID=$DB_BACKUP_AWS_ACCESS_KEY_ID \
     AWS_SECRET_ACCESS_KEY=$DB_BACKUP_AWS_SECRET_ACCESS_KEY \
     /app/vendor/bin/aws --region $DB_BACKUP_AWS_DEFAULT_REGION s3 cp - \
-    s3://$DB_BACKUP_S3_BUCKET_PATH/"${APP}_${NOW}".gz
+    s3://$DB_BACKUP_S3_BUCKET_PATH/"${APP}_${NOW}".sql.gz
 else
   echo "Unknown database URL protocol. Must be mysql."
   exit 1;
