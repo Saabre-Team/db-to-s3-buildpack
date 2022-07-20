@@ -1,7 +1,4 @@
 #!/usr/bin/bash
 
-if [[ -z "$DISABLE_DB_BACKUP" ]]; then
-    echo 'DB backup is enabled' && exit 0
-else
-    echo 'DB backup is disabled' && exit 1
-fi
+echo 'scalingo-db-backup-scheduler'
+exit 0

@@ -58,6 +58,11 @@ cp "$BUILDPACK_DIR/s3-backup.sh" "$BUILD_DIR/vendor/scripts/"
 
 echo "-----> Backup script moved"
 
+if [[ ! -z "$DISABLE_DB_BACKUP_SCHEDULE" ]]; then
+    echo "-----> Scheduling is disabled on this env"
+    exit 0
+fi
+
 if [[ ! -f "$BUILD_DIR/cron.json" ]]; then 
     echo "-----> Creating cron.json with schedule for backup script"
     echo '{ "jobs": [] }' > $BUILD_DIR/cron.json
